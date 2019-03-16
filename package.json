@@ -1,0 +1,42 @@
+{
+  "name": "nagoya-nef-2019",
+  "version": "0.0.0",
+  "description": "Layout for nagoya nef 2019 speedrun event",
+  "homepage": "",
+  "author": {
+    "name": "cma",
+    "email": "yamanaka-team@hotmail.co.jp",
+    "url": ""
+  },
+  "files": [
+    "dashboard",
+    "graphics",
+    "extension.js",
+    "extension"
+  ],
+  "keywords": [
+    "",
+    "nodecg-bundle"
+  ],
+  "nodecg": {
+    "compatibleRange": "^1.1.1",
+    "dashboardPanels": [
+      {
+        "name": "playview",
+        "title": "プレイ中画面",
+        "file": "playview.html",
+        "fullbleed": true,
+        "headerColor": "#bcbcff"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "index.html",
+        "width": 1280,
+        "height": 720
+      }
+    ]
+  },
+  "repository": "https://github.com/nodecg/nodecg.git",
+  "license": "MIT"
+}
