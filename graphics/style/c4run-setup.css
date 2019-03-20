@@ -1,0 +1,41 @@
+@import '../fonts/fonts.css';
+
+
+body {
+    background-image: url(../img/back_c4lan.png);
+    margin:0px;
+    font-family: 'keifont' 'Kosugi Maru';
+    color: #222222;
+}
+#wrapper {
+    background-color: rgba(255,255,255,0.7);
+    width:1280px;
+    height:720px;
+}
+#logo {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+#prepare-text {
+    position: absolute;
+    width: 5em;
+    bottom: 0.5em;
+    right: 0.5em;
+    font-size:48px;
+    font-weight:bold;
+}
+#info{
+    font-weight:bold;
+    font-size:22px;
+    font-family: 'keifont' 'Kosugi Maru';
+    color: #222222;
+    width: 200px;
+    height: 400px;
+    margin: 10px 5px;
+}
+
+#games {
+    font-family: 'keifont' 'Kosugi Maru';
+    color: #222222;
+}

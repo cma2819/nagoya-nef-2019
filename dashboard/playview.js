@@ -1,42 +1,23 @@
 'use strict'
 
 // Replicant
-const title = nodecg.Replicant('title', {defaultValue: ""});
-const runners = nodecg.Replicant('runners', {defaultValue: [{},{},{},{},{},{},{},{}]});
-const bingoList = nodecg.Replicant('bingoList', {defaultValue: []});
+const idx = nodecg.Replicant('idx', {defaultValue: 0});
+const run = nodecg.Replicant('run', {defaultValue: {}});
+const game = nodecg.Replicant('game', {defaultValue: ""});
+const category = nodecg.Replicant('category', {defaultValue: ""});
+const runners = nodecg.Replicant('runners', {defaultValue: [{},{}]});
 const options = nodecg.Replicant('options', {defaultValue: {}});
-
-nodecg.readReplicant('title', title => {
-    nodecg.readReplicant('runners', runners => {
-        nodecg.readReplicant('options', options => {
-            riot.update({title: title, runners: runners});
-        })
-    })
-})
 
 /*
     基本情報の更新
 */
 observer.on('update-basic-information', (basicInfo) => {
     // タイトル部
-    title.value = basicInfo.title;
-    const seed = basicInfo.seed;
-    // ビンゴ情報
-    if (seed) {
-        const baseUrl = 'http://www.speedrunslive.com/tools/';
-        const gameUrl = basicInfo.game.url;
-        const seedQuery = '?seed=' + basicInfo.seed;
-        const modeQuery = basicInfo.mode == 'normal' ? '' : ('&mode=' + basicInfo.mode);
-        const langQuery = '&lang=jp';
-        const bingoUrl = baseUrl + gameUrl + '/' + seedQuery + modeQuery + langQuery;
-        // Extentionに投げる
-        nodecg.sendMessage('getBingoList', bingoUrl)
-        .then(result => {
-            bingoList.value = result;
-        })
-        .catch(error => {
-            console.log(error);
-        });
+    run.value = {
+        idx: basicInfo.idx,
+        game: basicInfo.game,
+        category: basicInfo.category,
+        estimate: basicInfo.estimate
     }
 });
 

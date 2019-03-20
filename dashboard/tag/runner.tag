@@ -1,65 +1,16 @@
 <runner-info>
     <h3>Runner{opts.runner_idx + 1}</h3>
-    <input type="text" name="runner-name" placeholder="Player Name" onchange="{ changeName }" value="{ runner.name }" />
-    <div class="colors">
-        <label class="color-radio" each="{style,i in colors} " style={style}>
-            ■<input type="radio" name="runner-color{opts.runner_idx}" value="{i}" checked="{style.checked}" onclick="{ changeColor }" />
-        </label>
+    <div>
+        <input type="text" name="runner-name" placeholder="Player Name" onchange="{ changeName }" value="{ runner.name }" /><br />
+        <input type="text" name="runner-name" placeholder="Twitter" onchange="{ changeTwitter }" value="{ runner.twitter }" /><br />
+        <input type="text" name="runner-name" placeholder="Twitch" onchange="{ changeTwitch }" value="{ runner.twitch }" /><br />
+        <input type="text" name="runner-name" placeholder="NicoNico" onchange="{ changeNico }" value="{ runner.nico }" />
     </div>
-    <style>
-        h3 {
-            margin-bottom: 5px;
-        }
-
-        input[type="text"] {
-            margin: 5px 0.5em;
-        }
-
-        label.color-radio {
-            margin: 0.2em;
-            border-bottom-width: 1px;
-            border-bottom-style: solid;
-            border-bottom-color: #222222;
-        }
-
-        div.colors {
-            display: inline-block;
-            border-radius: 5px;
-            background-color: #ffffff;
-            padding: 5px 5px;
-        }
-    </style>
     <script>
         // 初期化
         this.runneridx = opts.runner_idx;
-        this.runner = {
-            'name': opts.data.name || '',
-            'color': opts.data.color || 0,
-            'enable': opts.data.enable || false
-        }
-        this.colors = [
-            {
-                color: "#222222",
-                "border-color": "#222222",
-                checked: false
-            },
-            {
-                color: "#ff0000",
-                "border-color": "#ff0000",
-                checked: false
-            },
-            {
-                color: "#00ff00",
-                "border-color": "#00ff00",
-                checked: false
-            },
-            {
-                color: "#0000ff",
-                "border-color": "#0000ff",
-                checked: false
-            }
-        ]// あとでcolor値だけ設定ファイル化
-        this.colors[this.runner.color].checked = true;
+        this.runner = opts.data;
+        this.runner.enable = opts.data.name ? true : false;
 
         // 名前変更時イベントハンドラ
         changeName(e) {
@@ -69,18 +20,33 @@
             observer.trigger('update-runner', this.runneridx, this.runner);
         }
 
-        // 色変更時イベントハンドラ
-        changeColor(e) {
-            const color = e.currentTarget.value;
-            this.runner.color = color;
-            console.log(this.runner);
+        // Twitter変更時イベントハンドラ
+        changeTwitter(e) {
+            const twitter = e.currentTarget.value;
+            this.runner.twitter = twitter;
+            observer.trigger('update-runner', this.runneridx, this.runner);
+        }
+
+        // Twitch変更時イベントハンドラ
+        changeTwitch(e) {
+            const twitch = e.currentTarget.value;
+            this.runner.twitch = twitch;
+            observer.trigger('update-runner', this.runneridx, this.runner);
+        }
+
+        // ニコニコ変更時イベントハンドラ
+        changeNico(e) {
+            const nico = e.currentTarget.value;
+            this.runner.nico = nico;
             observer.trigger('update-runner', this.runneridx, this.runner);
         }
 
         // クリア命令時に発火
-        observer.on('clear-runners-info', () =>{
+        observer.on('clear-runners-info', () => {
             this.runner.name = '';
-            this.runner.color = 0;
+            this.runner.twitter = '';
+            this.runner.twitch = '';
+            this.runner.nico = '';
             this.update();
         });
 
@@ -92,12 +58,17 @@
     <label> READY
         <input type="checkbox" name="ready" val="1" onchange="{ changeReadyState }" disabled="{ !runner.enable}" />
     </label>
-    <input type="text" size="8" readonly="readonly" value="{ time }" disabled="{ !runner.enable }"/>
-    <input type="number" min="0" max="5" placeholder="0" />
+    <!--
+    <input type="text" size="8" readonly="readonly" value="{ time }" disabled="{ !runner.enable }" />
     <button class="runner-finish" onclick="{finish}">Finish</button>
     <button class="runner-resume" onclick="{resume}">Resume</button>
+    -->
 
     <style>
+        :scope {
+            display: block;
+            float: left;
+        }
         h3 {
             margin-bottom: 5px;
         }
@@ -142,24 +113,23 @@
         });
 
         // Ready変更時のイベントハンドラ
-        changeReadyState (e) {
+        changeReadyState(e) {
             const ischecked = e.currentTarget.checked;
             observer.trigger('update-ready', this.runneridx, ischecked);
         }
 
-        finish (e) {
-            console.log(this.runneridx);
+        finish(e) {
             observer.trigger('update-finish-runner', this.runneridx);
         }
 
         observer.on('send-time', data => {
             if (data.idx == this.runneridx) {
-                this.update({time: data.time});
+                this.update({ time: data.time });
             }
         })
 
-        resume (e) {
-            this.update({time: '-'});
+        resume(e) {
+            this.update({ time: '-' });
             observer.trigger('update-resume-runner', this.runneridx);
         }
     </script>

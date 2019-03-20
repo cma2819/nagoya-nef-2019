@@ -1,22 +1,32 @@
 <basis>
     <h2>Basic Information</h2>
     <div class="basis-input">
-        <label>タイトル
-            <input type="text" name="title" size="40" value="{opts.title}" /></label>
-        <label>ゲーム
-            <select name="game" onchange="{ changeGame }">
-                <option each={game,i in gameList} value="{i}">{game.name}</option>
-            </select>
-        </label>
-        <label>モード
-            <select name="mode">
-                <option each={mode, j in modeList} value="{mode.param}">{mode.name}</option>
-            </select>
-        </label>
-        <label>Seed
-            <input type="text" name="seed" size="10" maxlength="10" /></label>
-        <button onclick="{ randomSeed }">シード生成</button>
-        <button onclick="{ updateBasicInformation }">更新</button>
+        <div>
+            <label>
+                <select name="overview" onchange="{changeItem}">
+                    <option each="{name, i in overviews}" value="{i}" selected={ i==idx}>{name}</option>
+                </select>
+            </label>
+            <button onclick="{upItem}">▲</button>
+            <button onclick="{downItem}">▼</button>
+        </div>
+        <div>
+            <label>ゲーム
+                <input type="text" name="game" size="80" value="{game}" />
+            </label><br />
+            <label>カテゴリ
+                <input type="text" name="category" size="80" value="{category}" />
+            </label><br />
+            <label>Estimate
+                <input type="text" name="estimate" size="20" value="{estimate}" />
+            </label>
+
+        </div>
+        <!--
+        <div class="buttons">
+            <button onclick="{ updateBasicInformation }">更新</button>
+        </div>
+        -->
     </div>
     <style>
         :scope {
@@ -25,53 +35,99 @@
 
         div {
             margin: 10px 0px;
+            margin-left: 5px;
         }
     </style>
 
     <script>
-        this.gameList = opts.gameList;
-
-        // モードリスト初期化
-        this.modeList = this.gameList[0].mode;
-
-        // ゲーム変更時のイベントハンドラ
-        changeGame (e) {
-            const target = e.currentTarget;
-            const newMode = this.gameList[target.value].mode;
-            this.modeList = newMode;
+        // 初期化
+        this.idx = opts.idx || 0;
+        this.itemlist = opts.itemlist;
+        const gameName = this.itemlist[this.idx].data[0];
+        const categoryName = this.itemlist[this.idx].data[1];
+        const estimate = secondsFormat(this.itemlist[this.idx].length_t);
+        this.game = gameName;
+        this.category = categoryName;
+        this.estimate = estimate;
+        // 概要リスト整形
+        this.overviews = [];
+        for (var i = 0; i < this.itemlist.length; i++) {
+            this.overviews.push(this.itemlist[i].data[0] + ' by ' + 'プレイヤー');
         }
 
-        // シード値の生成
-        randomSeed (e) {
-            const seedAry = [];
-            for (var i = 0; i < 6; i++) {
-                seedAry.push(Math.floor(Math.random() * 10));
+        function secondsFormat(t) {
+            const time = parseInt(t);
+            const hour = parseInt(time / 3600);
+            const minutes = ('0' + parseInt((time / 60) % 60)).slice(-2);
+            const seconds = ('0' + parseInt(time % 60)).slice(-2);
+            return (hour > 0 ? hour + ':' : '') + minutes + ':' + seconds;
+        }
+
+        // 概要リストの変更を通知
+        changeItem(e) {
+            const idx = e.currentTarget.value;
+            const gameName = this.itemlist[idx].data[0];
+            const categoryName = this.itemlist[idx].data[1];
+            const estimate = secondsFormat(this.itemlist[idx].length_t);
+            this.game = gameName;
+            this.category = categoryName;
+            this.estimate = estimate;
+            observer.trigger('update-runners', idx);
+        }
+
+        // 概要リストを上へ
+        upItem(e) {
+            const idx = parseInt($('select[name="overview"]').val());
+            if (idx > 0) {
+                this.idx = idx - 1;
+                //$('select[name="overview"]').val(idx - 1);
+                const gameName = this.itemlist[idx - 1].data[0];
+                const categoryName = this.itemlist[idx - 1].data[1];
+                const estimate = secondsFormat(this.itemlist[idx - 1].length_t);
+                this.game = gameName;
+                this.category = categoryName;
+                this.estimate = estimate;
+                observer.trigger('update-runners', idx - 1);
             }
-            const seed = seedAry.join('');
-            document.getElementsByName('seed')[0].value = seed;
+        }
+
+        // 概要リストを下へ
+        downItem(e) {
+            const idx = parseInt($('select[name="overview"]').val());
+            const maxidx = this.itemlist.length - 1;
+            if (idx < maxidx) {
+                this.idx = idx + 1;
+                //$('select[name="overview"]').val(idx + 1);
+                const gameName = this.itemlist[idx + 1].data[0];
+                const categoryName = this.itemlist[idx + 1].data[1];
+                const estimate = secondsFormat(this.itemlist[idx + 1].length_t);
+                this.game = gameName;
+                this.category = categoryName;
+                this.estimate = estimate;
+                observer.trigger('update-runners', idx + 1);
+            }
         }
 
         // 情報の更新をObserverに通知
-        updateBasicInformation (e) {
-            // タイトル
-            const title = document.getElementsByName('title')[0].value;
+        observer.on('update-all', () => {
+            // リストのインデックス
+            const idx = parseInt($('select[name="overview"]').val());
             // ゲーム
-            const gameIdx = document.getElementsByName('game')[0].value;
-            const game = this.gameList[gameIdx];
-            // モード
-            const mode = document.getElementsByName('mode')[0].value;
-            // Seed
-            const seed = document.getElementsByName('seed')[0].value;
+            const game = document.getElementsByName('game')[0].value;
+            // カテゴリ
+            const category = document.getElementsByName('category')[0].value;
+            // Estimate
+            const estimate = document.getElementsByName('estimate')[0].value;
 
             const basicInfo = {
-                'title': title,
+                'idx': idx,
                 'game': game,
-                'mode': mode,
-                'seed': seed
+                'category': category,
+                'estimate': estimate
             };
 
             observer.trigger('update-basic-information', basicInfo);
-        }
+        });
     </script>
 
 </basis>

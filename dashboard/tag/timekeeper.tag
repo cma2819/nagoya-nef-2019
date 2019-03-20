@@ -9,8 +9,10 @@
     <div class="runner-time" each="{runner, i in runners}">
         <runner-timer runner_idx="{i}" data="{runner}"></runner-timer>
     </div>
-    <button onclick="{ readyAllRunners }">Ready All</button>
-    <button onclick="{ unreadyAllRunners }">Unready All</button>
+    <div class="buttons">
+        <button onclick="{ readyAllRunners }">Ready All</button>
+        <button onclick="{ unreadyAllRunners }">Unready All</button>
+    </div>
     <style>
         #top {
             overflow: auto;
@@ -47,14 +49,14 @@
 
         this.runners = opts.runners;
 
-        readyAllRunners (e) {
+        readyAllRunners(e) {
             observer.trigger('ready-all-runners', true);
             for (var i = 0; i < this.runners.length; i++) {
                 this.runners[i].ready = true;
             }
             this.isAllReady = checkAllReady(this.runners);
         }
-        unreadyAllRunners (e) {
+        unreadyAllRunners(e) {
             observer.trigger('ready-all-runners', false);
             for (var i = 0; i < this.runners.length; i++) {
                 this.runners[i].ready = false;
@@ -62,17 +64,17 @@
             this.isAllReady = checkAllReady(this.runners);
         }
 
-        start (e) {
+        start(e) {
             observer.trigger('time-start');
             this.isTimerWorking = true;
         }
 
-        stop (e) {
+        stop(e) {
             observer.trigger('time-stop');
             this.isTimerWorking = false;
         }
 
-        reset (e) {
+        reset(e) {
             observer.trigger('time-reset');
             this.isTimerWorking = false;
         }
@@ -80,18 +82,18 @@
         // Ready状態変化時に発火
         observer.on('update-ready', (runneridx, state) => {
             this.runners[runneridx].ready = state;
-            this.update({ isAllReady:checkAllReady(this.runners) });
+            this.update({ isAllReady: checkAllReady(this.runners) });
         });
 
         // Runners情報更新時に発火（有効走者のカウント）
         observer.on('update-runners-info', (runners) => {
             this.runners = runners;
-            this.update({ isAllReady:checkAllReady(this.runners) });
+            this.update({ isAllReady: checkAllReady(this.runners) });
         });
 
         // Timeをプレビューする
         observer.on('time-changed', formatted_time => {
-            this.update({time: formatted_time});
+            this.update({ time: formatted_time });
         })
 
         // 全員準備完了かどうかチェック

@@ -4,9 +4,8 @@
         <div class="runner" each="{runner, i in runners}">
             <runner-info runner_idx="{i}" data="{runner}"></runner-info>
         </div>
-        <div id="runners-button">
+        <div class="buttons">
             <button onclick="{ clearRunners }">クリア</button>
-            <button onclick="{ updateRunners }">更新</button>
         </div>
     </div>
     <style>
@@ -23,27 +22,51 @@
             margin: 10px;
         }
 
-        div#runners-button {
-            text-align: right;
-        }
     </style>
     <script>
         // 初期化
         this.runners = opts.runners;
-        
+        this.itemlist = opts.itemlist;
+
+        // 走者情報更新
+        observer.on('update-runners', idx => {
+            const items = [
+                {
+                    name: 'test1',
+                    twitch: 'twitch1',
+                    twitter: 'twitter1',
+                    nico: 'nico1'
+                },
+                {
+                    name: 'test2',
+                    twitch: 'twitch2',
+                    nico: 'nico2'
+                }
+            ]
+            const runners = items;
+            this.runners = runners;
+            this.update();
+        })
+
         // 子要素たちの更新を検知する
         observer.on('update-runner', (runneridx, runner) => {
             this.runners[runneridx] = runner;
         });
 
         // クリアボタン押下時イベントハンドラ
-        clearRunners (e) {
+        clearRunners(e) {
             observer.trigger('clear-runners-info');
         }
 
         // 更新ボタン押下時イベントハンドラ
-        updateRunners (e) {
+        /*
+        updateRunners(e) {
             observer.trigger('update-runners-info', this.runners);
         }
+        */
+
+        observer.on('update-all', () => {
+            observer.trigger('update-runners-info', this.runners);
+        })
     </script>
 </runners>

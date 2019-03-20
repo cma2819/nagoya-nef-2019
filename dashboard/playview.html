@@ -6,14 +6,18 @@
 	<style>
 		:root {
 			--theme-color: #bcbcff;
+			--sub-color: #444444;
 			--normal-color: #000000;
 			--hidden-color: #aaaaaa;
 		}
 		.monospace {
     		font-family: monospace;
 		}
+		body {
+			font-size: 14px;
+		}
 		h2, h3 {
-			color: var(--hidden-color);
+			color: var(--sub-color);
 			margin: 0px 0.5em;
 			border-bottom: 1px solid var(--hidden-color);
 		}
@@ -27,8 +31,10 @@
             border: none;
             border-radius: 5px;
             background-color: #ffffff;
+			border-bottom: solid 1px var(--hidden-color);
             font-size: 100%;
-            padding: 0.5em 0.2em;
+			margin: 0.2em 0.2em;
+            padding: 0.5em 0.5em;
         }
 		.panel {
 			border: 2px solid var(--theme-color);
@@ -54,15 +60,18 @@
 		button {
 			border:1px solid var(--theme-color);
             border-radius: 5px;
-			color:#8a8aff;
 			font-size: 100%;
 			font-weight: bold;
+			color:#8a8aff;
 			background-color:#ffffff;
 			text-align:center;
             padding: 0.2em 0.5em;
 		}
 		button:active {
 			background-color: var(--hidden-color);
+		}
+		div.buttons {
+			text-align: right;
 		}
         input:disabled, button:disabled {
             background-color: var(--hidden-color);
@@ -71,11 +80,20 @@
 		#runners, #timekeeper, #options {
 			float: left;
 		}
+		#update {
+			padding: 1em;
+			font-size: 32px;
+			position: fixed;
+			bottom: 0px;
+			right: 0px;
+		}
 	</style>
 	<script src="playview.js" defer></script>
 	<script src="timekeeper.js" defer></script>
-	<script src="https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/riot-route@3.1.2/dist/route.min.js"></script>
+	<link rel="import" href="../lib/import.html">
+	<script src="./lib/jquery-3.3.1.min.js"></script>
+	<script src="./lib/riot+compiler.min.js"></script>
+	<script src="./lib/route.min.js"></script>
 
 	<script src="./tag/basis.tag" type="riot/tag"></script>
 	<script src="./tag/runners.tag" type="riot/tag"></script>
@@ -98,20 +116,28 @@
 	<div id="options" class="panel">
 		<options></options>
 	</div>
+	<div id="update">
+		<button onclick="updateAll()">更新</button>
+	</div>
 </body>
 <script>
 	// Replicant
 	const observer = riot.observable();
-	nodecg.readReplicant('title', value => {
-		riot.mount('basis', { observer: observer, title: value, gameList: nodecg.bundleConfig.bingoSources });
+	const itemlist = nodecg.bundleConfig.schedule.items;
+	nodecg.readReplicant('run', value => {
+		riot.mount('basis', { observer: observer, idx: value.idx, itemlist: itemlist});
 	})
 	nodecg.readReplicant('runners', value => {
-		riot.mount('runners', { observer: observer, runners: value });
+		riot.mount('runners', { observer: observer, runners: value, itemlist: itemlist});
 		riot.mount('timekeeper', { observer: observer, runners: value });
 	})
 	nodecg.readReplicant('options', value => {
 		riot.mount('options', { observer: observer, optionList: nodecg.bundleConfig.optionList, options: value });
 	})
+
+	function updateAll() {
+		observer.trigger('update-all');
+	}
 </script>
 </body>
 

@@ -1,0 +1,31 @@
+
+
+body {
+    margin: 0px;
+}
+
+run-info {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    color: var(--font-color);
+    background-color: var(--background-color);
+}
+#run-main {
+    font-size: 24px;
+}
+#run-sub {
+    font-size: 22px;
+}
+
+player-info {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    color: var(--font-color);
+    background-color: var(--background-color);
+}
+
+player-info .name {
+    font-size: 22px;
+}
