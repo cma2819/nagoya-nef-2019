@@ -15,8 +15,8 @@
 
         div.runner {
             margin: 2px 0px;
+            float: left;
         }
-
         div.runners,
         div#runners-button {
             margin: 10px;
@@ -30,19 +30,7 @@
 
         // 走者情報更新
         observer.on('update-runners', idx => {
-            const items = [
-                {
-                    name: 'test1',
-                    twitch: 'twitch1',
-                    twitter: 'twitter1',
-                    nico: 'nico1'
-                },
-                {
-                    name: 'test2',
-                    twitch: 'twitch2',
-                    nico: 'nico2'
-                }
-            ]
+            const items = itemlist[idx].data[3];
             const runners = items;
             this.runners = runners;
             this.update();

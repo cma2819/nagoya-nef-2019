@@ -7,6 +7,7 @@ const game = nodecg.Replicant('game', {defaultValue: ""});
 const category = nodecg.Replicant('category', {defaultValue: ""});
 const runners = nodecg.Replicant('runners', {defaultValue: [{},{}]});
 const options = nodecg.Replicant('options', {defaultValue: {}});
+const setup = nodecg.Replicant('setup', {defaultValue: {}});
 
 /*
     基本情報の更新
@@ -35,6 +36,14 @@ observer.on('update-runners-info', (runnersInfo) => {
 });
 
 /*
+    セットアップ用 実績情報の更新
+*/
+observer.on('update-setup-result', (resultInfo) => {
+    console.log(resultInfo);
+    setup.value.result = resultInfo;
+})
+
+/*
     走者Finish時
 */
 observer.on('update-finish-runner', runnerIdx => {
@@ -57,3 +66,41 @@ observer.on('update-option', option => {
     // optionのキーに値をセット
     options.value[option.name] = option.checked;
 });
+
+/*
+    共通関数
+*/
+function secondsFormat(t) {
+    const time = parseInt(t);
+    const hour = parseInt(time / 3600);
+    const minutes = ('0' + parseInt((time / 60) % 60)).slice(-2);
+    const seconds = ('0' + parseInt(time % 60)).slice(-2);
+    return (hour > 0 ? hour + ':' : '') + minutes + ':' + seconds;
+}
+
+function getYmdFromDate(date) {
+    const year = paddingBy('0', date.getFullYear(), 4);
+    const month = paddingBy('0', date.getMonth() + 1, 2);
+    const day = paddingBy('0', date.getDate(), 2);
+    return year + '/' + month + '/' + day;
+}
+
+function getTimeFromDate(date) {
+    const hour = paddingBy('0', date.getHours(), 2);
+    const minute = paddingBy('0', date.getMinutes(), 2);
+    return hour + ':' + minute;
+}
+
+function getTimeFromSeconds(sec) {
+    const minute = sec/60;
+    const second = paddingBy('0', sec%60, 2);
+    return minute + ':' + second;
+}
+
+function paddingBy(str, src, num) {
+    let base = '';
+    for (var i = 0; i < num; i++) {
+        base += str;
+    }
+    return (base + src).slice(num * -1);
+}

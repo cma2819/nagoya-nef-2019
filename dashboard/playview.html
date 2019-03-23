@@ -76,14 +76,17 @@
         input:disabled, button:disabled {
             background-color: var(--hidden-color);
         }
-
-		#runners, #timekeeper, #options {
+		#basis {
+			overflow: auto;
+			position: relative;
+		}
+		#runners, #timekeeper, #options, #setup {
 			float: left;
 		}
 		#update {
 			padding: 1em;
 			font-size: 32px;
-			position: fixed;
+			position: absolute;
 			bottom: 0px;
 			right: 0px;
 		}
@@ -100,39 +103,49 @@
 	<script src="./tag/runner.tag" type="riot/tag"></script>
 	<script src="./tag/timekeeper.tag" type="riot/tag"></script>
 	<script src="./tag/options.tag" type="riot/tag"></script>
+	<script src="./tag/setup.tag" type="riot/tag"></script>
 
 </head>
 
 <body>
 	<div id="basis" class="panel">
 		<basis></basis>
+		<div id="runners" class="panel">
+			<runners></runners>
+		</div>
+		<div id="timekeeper" class="panel">
+			<timekeeper></timekeeper>
+		</div>
+		<div id="update">
+			<button onclick="updateAll()">更新</button>
+		</div>
 	</div>
-	<div id="runners" class="panel">
-		<runners></runners>
+
+	<div id="setup" class="panel">
+		<setup></setup>
 	</div>
-	<div id="timekeeper" class="panel">
-		<timekeeper></timekeeper>
-	</div>
+	<!--
 	<div id="options" class="panel">
 		<options></options>
 	</div>
-	<div id="update">
-		<button onclick="updateAll()">更新</button>
-	</div>
+	-->
 </body>
 <script>
 	// Replicant
 	const observer = riot.observable();
 	const itemlist = nodecg.bundleConfig.schedule.items;
 	nodecg.readReplicant('run', value => {
-		riot.mount('basis', { observer: observer, idx: value.idx, itemlist: itemlist});
+		riot.mount('basis', { observer: observer, idx: value.idx, itemlist: itemlist });
 	})
 	nodecg.readReplicant('runners', value => {
-		riot.mount('runners', { observer: observer, runners: value, itemlist: itemlist});
+		riot.mount('runners', { observer: observer, runners: value, itemlist: itemlist });
 		riot.mount('timekeeper', { observer: observer, runners: value });
 	})
 	nodecg.readReplicant('options', value => {
 		riot.mount('options', { observer: observer, optionList: nodecg.bundleConfig.optionList, options: value });
+	})
+	nodecg.readReplicant('setup', value => {
+		riot.mount('setup', { observer: observer, data: value.result || {}, itemlist: itemlist });
 	})
 
 	function updateAll() {

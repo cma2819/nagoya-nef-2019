@@ -71,6 +71,9 @@
 
         stop(e) {
             observer.trigger('time-stop');
+            for (var i = 0; i < this.runners.length; i++) {
+                this.runners[i].ready = false;
+            }
             this.isTimerWorking = false;
         }
 

@@ -1,0 +1,48 @@
+.detail {
+    color: #202020;
+    background-color: #ffffff;
+    font-size: 6vh;
+    box-shadow: 1vw 1vh 1vw;
+    border-radius: 0.25vh;
+}
+
+.sub {
+    font-size: 5vh;
+}
+
+.main th {
+    border-bottom: 0.1em dashed var(--main-color);
+}
+
+td.category {
+    padding-left: 1em;
+}
+span {
+    margin-right: 0.5em;
+}
+
+td.other {
+    border-left: 0.1em solid var(--main-color);
+    position: relative;
+    vertical-align: middle;
+}
+
+span.runner, span.start {
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    opacity: 1;
+    transform: translateX(0px);
+    transition: all 500ms 0s ease-out;
+}
+
+span.hidden {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+img.othericon {
+    height: 1em;
+    width: 1em;
+    margin-right: 0.2em;
+}

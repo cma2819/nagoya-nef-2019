@@ -5,7 +5,7 @@
             <th colspan="2"><span>{game[0]}</span><span if={game[1]}>{game[1]}</span></th>
         </tr>
         <tr id="run-sub">
-            <td id="sub-left">{category}</td>
+            <td id="sub-left"><span>{category[0]}</span><span if={category[1]}>{category[1]}</span></td>
             <td id="sub-right">Wii</td>
         </tr>
     </table>
@@ -40,6 +40,7 @@
 
         td#sub-left {
             border-right: 2px var(--main-color) solid;
+            width: 70%;
         }
 
         span {
@@ -56,13 +57,13 @@
     <script>
         // 初期化
         this.game = opts.run.game.split(' ', 2);
-        this.category = opts.run.category;
+        this.category = opts.run.category.split(' ', 2);
         this.estimate = opts.run.estimate;
 
         // Set listener to update values | 値更新時のイベントリスナ定義
         observer.on('update-run-info', (data) => {
             this.game = data.game.split(' ', 2);
-            this.category = data.category;
+            this.category = data.category.split(' ', 2);
             this.estimate = data.estimate;
             this.update();
         });

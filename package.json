@@ -31,11 +31,6 @@
     ],
     "graphics": [
       {
-        "file": "index.html",
-        "width": 1280,
-        "height": 720
-      },
-      {
         "file": "run-info.html",
         "width": 640,
         "height": 480
@@ -44,6 +39,11 @@
         "file": "timekeeper.html",
         "width": 1080,
         "height": 120
+      },
+      {
+        "file": "setup.html",
+        "width": 960,
+        "height": 540
       }
     ]
   },

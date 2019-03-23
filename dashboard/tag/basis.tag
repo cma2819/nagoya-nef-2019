@@ -17,8 +17,11 @@
             <label>カテゴリ
                 <input type="text" name="category" size="80" value="{category}" />
             </label><br />
-            <label>Estimate
+            <label>目標タイム
                 <input type="text" name="estimate" size="20" value="{estimate}" />
+            </label>
+            <label>機種
+                <input type="text" name="platform" size="15" value="{platform}" />
             </label>
 
         </div>
@@ -46,21 +49,19 @@
         const gameName = this.itemlist[this.idx].data[0];
         const categoryName = this.itemlist[this.idx].data[1];
         const estimate = secondsFormat(this.itemlist[this.idx].length_t);
+        const platform = this.itemlist[this.idx].data[2];
         this.game = gameName;
         this.category = categoryName;
         this.estimate = estimate;
+        this.platform = platform;
         // 概要リスト整形
         this.overviews = [];
         for (var i = 0; i < this.itemlist.length; i++) {
-            this.overviews.push(this.itemlist[i].data[0] + ' by ' + 'プレイヤー');
-        }
-
-        function secondsFormat(t) {
-            const time = parseInt(t);
-            const hour = parseInt(time / 3600);
-            const minutes = ('0' + parseInt((time / 60) % 60)).slice(-2);
-            const seconds = ('0' + parseInt(time % 60)).slice(-2);
-            return (hour > 0 ? hour + ':' : '') + minutes + ':' + seconds;
+            const player = [];
+            for (var j = 0; j < this.itemlist[i].data[3].length; j++) {
+                player.push(this.itemlist[i].data[3][j].name);
+            }
+            this.overviews.push(this.itemlist[i].data[0] + ' by ' + player.join('／'));
         }
 
         // 概要リストの変更を通知
@@ -69,9 +70,11 @@
             const gameName = this.itemlist[idx].data[0];
             const categoryName = this.itemlist[idx].data[1];
             const estimate = secondsFormat(this.itemlist[idx].length_t);
+            const platform = this.itemlist[idx].data[2];
             this.game = gameName;
             this.category = categoryName;
             this.estimate = estimate;
+            this.platform = platform;
             observer.trigger('update-runners', idx);
         }
 
@@ -84,9 +87,11 @@
                 const gameName = this.itemlist[idx - 1].data[0];
                 const categoryName = this.itemlist[idx - 1].data[1];
                 const estimate = secondsFormat(this.itemlist[idx - 1].length_t);
+                const platform = this.itemlist[idx - 1].data[2];
                 this.game = gameName;
                 this.category = categoryName;
                 this.estimate = estimate;
+                this.platform = platform;
                 observer.trigger('update-runners', idx - 1);
             }
         }
@@ -101,9 +106,11 @@
                 const gameName = this.itemlist[idx + 1].data[0];
                 const categoryName = this.itemlist[idx + 1].data[1];
                 const estimate = secondsFormat(this.itemlist[idx + 1].length_t);
+                const platform = this.itemlist[idx + 1].data[2];
                 this.game = gameName;
                 this.category = categoryName;
                 this.estimate = estimate;
+                this.platform = platform;
                 observer.trigger('update-runners', idx + 1);
             }
         }
@@ -118,12 +125,15 @@
             const category = document.getElementsByName('category')[0].value;
             // Estimate
             const estimate = document.getElementsByName('estimate')[0].value;
+            // 機種
+            const platform = document.getElementsByName('platform')[0].value;
 
             const basicInfo = {
                 'idx': idx,
                 'game': game,
                 'category': category,
-                'estimate': estimate
+                'estimate': estimate,
+                'platform': platform
             };
 
             observer.trigger('update-basic-information', basicInfo);
