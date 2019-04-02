@@ -1,7 +1,7 @@
 <time>
     <table>
         <tr>
-            <td class="time {state}"><span>{time}</span></td>
+            <td class="time {state}"><span></span></td>
             <td class="estimate">目標タイム {estimate}</td>
         </tr>
     </table>

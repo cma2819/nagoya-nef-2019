@@ -135,7 +135,7 @@
 	const observer = riot.observable();
 	const itemlist = nodecg.bundleConfig.schedule.items;
 	nodecg.readReplicant('run', value => {
-		riot.mount('basis', { observer: observer, idx: value.idx, itemlist: itemlist });
+		riot.mount('basis', { observer: observer, idx: value.idx || 0, itemlist: itemlist });
 	})
 	nodecg.readReplicant('runners', value => {
 		riot.mount('runners', { observer: observer, runners: value, itemlist: itemlist });

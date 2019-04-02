@@ -41,6 +41,11 @@
         "height": 120
       },
       {
+        "file": "timekeeper_notime.html",
+        "width": 1080,
+        "height": 120
+      },
+      {
         "file": "setup.html",
         "width": 960,
         "height": 540

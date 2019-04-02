@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 // Replicant
 const idx = nodecg.Replicant('idx', {defaultValue: 0});
@@ -18,7 +18,8 @@ observer.on('update-basic-information', (basicInfo) => {
         idx: basicInfo.idx,
         game: basicInfo.game,
         category: basicInfo.category,
-        estimate: basicInfo.estimate
+        estimate: basicInfo.estimate,
+        platform: basicInfo.platform
     }
 });
 
@@ -39,7 +40,6 @@ observer.on('update-runners-info', (runnersInfo) => {
     セットアップ用 実績情報の更新
 */
 observer.on('update-setup-result', (resultInfo) => {
-    console.log(resultInfo);
     setup.value.result = resultInfo;
 })
 
@@ -68,8 +68,42 @@ observer.on('update-option', option => {
 });
 
 /*
+    タイマースタート時
+*/
+observer.on('time-start', () => {
+    // 現在日時を取得
+    const nowDate = new Date();
+    // 文字列に整形
+    const date = nowDate.getFullYear() + '/' + paddingBy('0', nowDate.getMonth() + 1, 2) + '/' + paddingBy('0', nowDate.getDate(), 2);
+    const time = paddingBy('0', nowDate.getHours(), 2) + ':' + paddingBy('0', nowDate.getMinutes(), 2);
+    // 現在のRTAインデックス
+    const runIdx = run.value.idx;
+    observer.trigger('result-start', runIdx, date, time);
+});
+
+/*
+    タイマー終了時
+*/
+observer.on('time-stop', () => {
+    // 現在日時を取得
+    const nowDate = new Date();
+    // 文字列に整形
+    const date = nowDate.getFullYear() + '/' + paddingBy('0', nowDate.getMonth() + 1, 2) + '/' + paddingBy('0', nowDate.getDate(), 2);
+    const time = paddingBy('0', nowDate.getHours(), 2) + ':' + paddingBy('0', nowDate.getMinutes(), 2);
+    // 現在のRTAインデックス
+    const runIdx = run.value.idx;
+    observer.trigger('result-stop', runIdx, date, time);
+});
+/*
     共通関数
 */
+function fixTimezone(date, diffHour) {
+    const dateTimeOffset = parseInt(-1 * date.getTimezoneOffset() / 60);
+    // diffHourとの差を求める
+    const diffFromDate = diffHour - dateTimeOffset;
+    date.setHours(date.getHours() + diffFromDate);
+    return date;
+}
 function secondsFormat(t) {
     const time = parseInt(t);
     const hour = parseInt(time / 3600);

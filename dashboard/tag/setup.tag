@@ -45,11 +45,10 @@
     </style>
     <script>
         // 初期化
-        console.log(opts.data);
         this.idx = opts.data.idx || 0;
         this.status = opts.data.status || 'start';
-        this.itemlist = opts.itemlist;
         this.diff = opts.data.diff || 0;
+        this.itemlist = opts.itemlist;
 
         // 概要リスト整形
         this.overviews = [];
@@ -74,6 +73,31 @@
         this.result.setTime(this.scheduled.getTime() + (this.diff * 1000));
         this.resultDate = getYmdFromDate(this.result);
         this.resultTime = getTimeFromDate(this.result);
+
+        // タイマーとの連携
+        observer.on('result-start', (runIdx, date, time) => {
+            this.status = 'start';
+            this.idx = runIdx;
+            this.scheduled = new Date(this.itemlist[this.idx].scheduled);
+            this.scheduledDate = getYmdFromDate(this.scheduled);
+            this.scheduledTime = getTimeFromDate(this.scheduled);
+            this.resultDate = date;
+            this.resultTime = time;
+            this.diff = updateResult(this);
+            this.update();
+        });
+        observer.on('result-stop', (runIdx, date, time) => {
+            this.status = 'finish';
+            this.idx = runIdx;
+            this.scheduled = new Date(this.itemlist[this.idx].scheduled);
+            this.scheduled.setSeconds(this.scheduled.getSeconds() + this.itemlist[this.idx].length_t);
+            this.scheduledDate = getYmdFromDate(this.scheduled);
+            this.scheduledTime = getTimeFromDate(this.scheduled);
+            this.resultDate = date;
+            this.resultTime = time;
+            this.diff = updateResult(this);
+            this.update();
+        })
 
         // リスト変更時
         changeItem(e) {
@@ -163,16 +187,20 @@
 
         // 更新ボタン押下時
         updateResult(e) {
-            const result = {};
-            result.idx = this.idx;
-            result.status = this.status;
-            const ymd = this.resultDate.replace(/\//g, '-');
-            const time = this.resultTime + ':00';
-            const resultDateFormatted = ymd + 'T' + time + '+09:00';
-            result.diff = parseInt((new Date(resultDateFormatted).getTime() - this.scheduled.getTime()) / 1000);
-            // Riotタグのdiffも設定する
-            this.diff = result.diff;
-            observer.trigger('update-setup-result', result);
+            this.diff = updateResult(this);
         }
+
+        function updateResult(comp) {
+            const result = {};
+            result.idx = comp.idx;
+            result.status = comp.status;
+            const formattedYmd = comp.resultDate.replace(/\//g, '-');
+            const formattedTime = comp.resultTime + ':00';
+            const resultDateFormatted = formattedYmd + 'T' + formattedTime + '+09:00';
+            result.diff = parseInt((new Date(resultDateFormatted).getTime() - comp.scheduled.getTime()) / 1000);
+            observer.trigger('update-setup-result', result);
+            return result.diff;
+        }
+
     </script>
 </setup>

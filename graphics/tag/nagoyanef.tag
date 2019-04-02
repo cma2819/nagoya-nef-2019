@@ -6,7 +6,7 @@
         </tr>
         <tr id="run-sub">
             <td id="sub-left"><span>{category[0]}</span><span if={category[1]}>{category[1]}</span></td>
-            <td id="sub-right">Wii</td>
+            <td id="sub-right">{platform}</td>
         </tr>
     </table>
 
@@ -59,12 +59,14 @@
         this.game = opts.run.game.split(' ', 2);
         this.category = opts.run.category.split(' ', 2);
         this.estimate = opts.run.estimate;
+        this.platform = opts.run.platform;
 
         // Set listener to update values | 値更新時のイベントリスナ定義
         observer.on('update-run-info', (data) => {
             this.game = data.game.split(' ', 2);
             this.category = data.category.split(' ', 2);
             this.estimate = data.estimate;
+            this.platform = data.platform;
             this.update();
         });
     </script>
